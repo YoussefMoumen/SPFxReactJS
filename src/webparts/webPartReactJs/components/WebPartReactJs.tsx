@@ -82,6 +82,7 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
       </div>
     );
   }
+  //EDit
   Showitem(id:string) {
      this.setState ({showIt: true});
      var reactHandler = this;  
