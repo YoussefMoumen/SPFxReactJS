@@ -36,6 +36,7 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
       showCreate:false
     };
     this.Showitem = this.Showitem.bind(this);
+    this.handler = this.handler.bind(this);
   }
 
   public componentWillMount(){
@@ -82,11 +83,15 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
             })}  
           </div> )
       } 
-        {this.state.showIt && <WebPartReactJSEdit  currentStat={this.state}/>}
-        {this.state.showCreate && <WebPartReactJSCreate  currentStat={this.state.item}/>}
+        {this.state.showIt && <WebPartReactJSEdit  currentStat={this.state} action={this.handler}/>}
+        {this.state.showCreate && <WebPartReactJSCreate  action={this.handler}/>}
       </div>
     );
   }
+  handler() {
+    this.setState ({showIt: false});
+    this.setState ({showCreate: false});
+}
   //EDit
   Showitem(id:string) {
      this.setState ({showIt: true});

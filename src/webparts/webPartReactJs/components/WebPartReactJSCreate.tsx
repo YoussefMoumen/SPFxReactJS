@@ -9,19 +9,20 @@ export default class WebPartReactJSCreate extends React.Component<any,any> {
     }
     
     public render() {
+        console.log(this.props.action);        
         return (    
           <div>
             <input id="Title"  placeholder="Title"    />         
-             <button id="AddItem"  type="submit" onClick={() => this.addItem()}>Add</button>
+             <button id="AddItem"  type="submit" onClick={() => this.addItem()}>Add</button>  
           </div>
         );
       }
-      addItem(){
+      addItem = () => {
         pnp.sp.web.lists.getByTitle('List To test').items.add({    
             Title : document.getElementById('Title')["value"],
            });
-            alert("Record with Title Name : "+ document.getElementById('Title')["value"] + " Added !");        
-    
+            alert("Record with Title Name : "+ document.getElementById('Title')["value"] + " Added !");
+            this.props.action();                                          
       }
 }
 
