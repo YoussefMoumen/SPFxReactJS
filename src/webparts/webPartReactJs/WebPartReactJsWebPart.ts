@@ -17,6 +17,7 @@ import * as jquery from 'jquery';
 export interface IWebPartReactJsWebPartProps {
   description: string;
   currentstate: string;
+  Title:string;
 } 
 
 export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPartReactJsWebPartProps> {
@@ -26,7 +27,8 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
       {
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,
-        currentStat: this.properties.currentstate      
+        currentStat: this.properties.currentstate,
+        Title: this.properties.Title      
       } 
        
     );

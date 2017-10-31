@@ -8,6 +8,7 @@ import * as jquery from 'jquery';
 import * as pnp from 'sp-pnp-js';
 
 import WebPartReactJSEdit from './WebPartReactJSEdit';
+import WebPartReactJSCreate from './WebPartReactJSCreate';
 
 
 export default class WebPartReactJs extends React.Component<IWebPartReactJsProps, IWebPartReactJSState> {
@@ -31,7 +32,8 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
             "Title":""  
           }  
         },
-      showIt:false
+      showIt:false,
+      showCreate:false
     };
     this.Showitem = this.Showitem.bind(this);
   }
@@ -58,7 +60,7 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
     
     return (
       <div className={styles.listItemsForm}>  
-      {!this.state.showIt &&
+      {!this.state.showIt && !this.state.showCreate &&
       (
         <div className={styles.Table}>  
           <div className={styles.Heading}>  
@@ -72,19 +74,23 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
                   <div className={styles.Cell}>{item.Title}</div>  
                   <div className={styles.Cell}>{item.Created}</div>  
                   <div className={styles.Cell}>{item.Author.Title}</div>  
-                  <div className={styles.Cell}><button id="ShowItem" type="submit" onClick={() => this.Showitem(item.Id)}>Show item</button></div>
+                  <div className={styles.Cell}>
+                  <button id="ShowItem" type="submit" onClick={() => this.Showitem(item.Id)}>Show item details</button>
+                  <button id="Create" type="submit" onClick={() => this.createItem()}>Create item</button>
+                  </div>
                 </div>);  
             })}  
           </div> )
       } 
         {this.state.showIt && <WebPartReactJSEdit  currentStat={this.state}/>}
-        
+        {this.state.showCreate && <WebPartReactJSCreate  currentStat={this.state.item}/>}
       </div>
     );
   }
   //EDit
   Showitem(id:string) {
      this.setState ({showIt: true});
+     this.setState ({showCreate: false});
      var reactHandler = this;  
      jquery.ajax({  
          url: `${this.props.siteurl}/_api/web/lists/getbytitle('List To test')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
@@ -100,5 +106,9 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
          }  
      });
      
+   }
+   createItem(){
+    this.setState ({showIt: false});
+    this.setState ({showCreate: true});
    }
 }
