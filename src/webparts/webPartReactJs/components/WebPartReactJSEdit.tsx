@@ -10,13 +10,13 @@ export default class WebPartReactJSEdit extends React.Component<any,any> {
         return (    
           <div>
               <div>Title : {this.props.currentStat.item.Title}</div>
-              <button id="AddItem"  type="submit" onClick={() => this.returnList()}>Add</button>
+              <button id="AddItem"  type="submit" onClick={() => this.returnList()}>Return</button>
           </div>
           
         );
       }
-      returnList(){
-          this.props.action();
+      public returnList(){
+          this.props.action(true);
       }
 
 }

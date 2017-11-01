@@ -17,4 +17,5 @@ export interface IWebPartReactJSState{
         };
           showIt:boolean;
           showCreate:boolean;
+          loading:boolean;
   }

@@ -28,7 +28,7 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,
         currentStat: this.properties.currentstate,
-        Title: this.properties.Title      
+        Title: this.properties.Title           
       } 
        
     );
