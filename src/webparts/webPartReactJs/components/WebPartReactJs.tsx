@@ -124,6 +124,7 @@ export default class WebPartReactJs extends React.Component<IWebPartReactJsProps
     
 }
   //EDit
+  //Test Push from local
   public Showitem(id:string) {     
      var reactHandler = this;  
      jquery.ajax({  
