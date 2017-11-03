@@ -1,4 +1,4 @@
-export interface IWebPartReactJSState{  
+export interface IState{  
     items:[  
           {  
             "Title":string,  
@@ -17,5 +17,6 @@ export interface IWebPartReactJSState{
         };
           showIt:boolean;
           showCreate:boolean;
+          showUpdate:boolean;
           loading:boolean;
   }

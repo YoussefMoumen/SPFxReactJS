@@ -8,22 +8,18 @@ import {
 } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'WebPartReactJsWebPartStrings';
-import WebPartReactJs from './components/WebPartReactJs';
-import WebPartReactJSEdit from './components/WebPartReactJSEdit';
-import { IWebPartReactJsProps } from './components/IWebPartReactJsProps';
+import WebPart from './components/WebPart';
+import Detail from './components/list/item/Detail';
+import { IProps,IWebPartReactJsWebPartProps } from './model/IProps';
 import { css } from 'office-ui-fabric-react';
 import * as jquery from 'jquery';
 
-export interface IWebPartReactJsWebPartProps {
-  description: string;
-  currentstate: string;
-  Title:string;
-} 
+
 
 export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPartReactJsWebPartProps> {
   public render(): void {
-    const element: React.ReactElement<IWebPartReactJsProps > = React.createElement(
-      WebPartReactJs,
+    const element: React.ReactElement<IProps> = React.createElement(
+      WebPart,
       {
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,

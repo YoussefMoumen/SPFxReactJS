@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { IWebPartReactJsProps } from './IWebPartReactJsProps';
 import {
     Spinner,
     SpinnerSize
   } from 'office-ui-fabric-react/lib/Spinner';
 
-export default class WebpartReactJSLoading extends React.Component<any,any> {
+export default class Loader extends React.Component<any,any> {
 
-    public constructor(props:IWebPartReactJsProps , state ){  
+    public constructor(props , state ){  
         super(props); 
     }
     public render() {

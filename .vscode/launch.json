@@ -4,22 +4,21 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Local Workbench",
-            "url": "https://localhost:4321/temp/workbench.html",
-            "webRoot": "${workspaceRoot}",
-            "sourceMaps": true,
-            "sourceMapPathOverrides": {
-                "webpack:///../../../src/*": "${webRoot}/src/*",
-                "webpack:///../../../../src/*": "${webRoot}/src/*",
-                "webpack:///../../../../../src/*": "${webRoot}/src/*"
-            },
-            "runtimeArgs": [
-                "--remote-debugging-port=9222"
-            ]
-        }
-    ]
+    {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Launch Chrome",
+        "url": "https://localhost:4321/temp/workbench.html",
+        "webRoot": "${workspaceRoot}",
+        "sourceMaps": true,
+        "sourceMapPathOverrides": {
+            "webpack:///../../../src/*": "${webRoot}/src/*",
+            "webpack:///../../../../src/*": "${webRoot}/src/*",
+            "webpack:///../../../../../src/*": "${webRoot}/src/*"
+        },
+        "runtimeArgs": [
+            "--remote-debugging-port=9222"
+        ]
+    }
+]
 }
