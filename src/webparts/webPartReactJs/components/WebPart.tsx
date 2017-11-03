@@ -45,36 +45,23 @@ export default class WebPart extends React.Component<IProps, IState> {
       showUpdate:false,
       loading:true
     };
+
     this.Showitem = this.Showitem.bind(this);
     this.handler = this.handler.bind(this);
     this.updateStatus = this.updateStatus.bind(this);
+    this.DeleteItem = this.DeleteItem.bind(this);
   }
 
   public componentDidMount(){
     var reactHandler = this;  
-    // jquery.ajax({  
-    //     url: `${this.props.siteurl}/_api/web/lists/getbytitle('List To test')/items?$select=Title,Id,Created,Author/Title&$expand=Author`,  
-    //     type: "GET",  
-    //     headers:{'Accept': 'application/json; odata=verbose;'},  
-    //     success:(resultData) => {  
-    //       /*resultData.d.results;*/  
-    //       reactHandler.setState({  
-    //         items: resultData.d.results  
-    //       });
-    //      this.setState({ loading: false });
-    //     },  
-    //     error : (jqXHR, textStatus, errorThrown) => {  
-    //     }  
-    // });
+
     pnp.sp.web.lists.getByTitle("List To test").items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
-      console.log(response);
-      
+      console.log(response);      
       reactHandler.setState({  
                 items: response  
               });
        reactHandler.setState({ loading: false });
-     });
-     
+     });     
   }
    
   public render(): React.ReactElement<IProps> {
@@ -85,7 +72,7 @@ export default class WebPart extends React.Component<IProps, IState> {
           (
             <div>
               <DefaultButton buttonType={3} className='ms-Button ms-Button--primary' id="Create" type="submit" onClick={() => this.createItem()} text={"Create Item"} />
-              <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} />
+              <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} />
             </div>)
         }
         {this.state.loading && <Loader />}
@@ -118,11 +105,9 @@ export default class WebPart extends React.Component<IProps, IState> {
         error : (jqXHR, textStatus, errorThrown) => {  
         }  
     });  
-  }
-    
+  }    
 }
-  //EDit
-  //Test Push from local
+
   public Showitem = (id:string) => {     
      var reactHandler = this;  
      jquery.ajax({  
@@ -161,6 +146,21 @@ export default class WebPart extends React.Component<IProps, IState> {
         error : (jqXHR, textStatus, errorThrown) => {  
         }  
     });                       
+  }
+
+  public DeleteItem(id:string){
+    var reactHandler = this;
+    reactHandler.setState({ loading: true });
+    pnp.sp.web.lists.getByTitle("List To test").items.getById(+id).delete().then(_ => {
+      pnp.sp.web.lists.getByTitle("List To test").items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
+        console.log(response);
+        
+        reactHandler.setState({  
+                  items: response  
+                });
+       });
+       reactHandler.setState({ loading: false });
+    });
   }
 
    public createItem(){
