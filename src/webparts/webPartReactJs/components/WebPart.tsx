@@ -18,6 +18,7 @@ import Detail from './list/item/Detail';
 import Create from './list/item/Create';
 import Loader from './Loader';
 import Listing from './list/List';
+import Search from './Search'
 
 export default class WebPart extends React.Component<IProps, IState> {
   public constructor(props, state){  
@@ -43,7 +44,8 @@ export default class WebPart extends React.Component<IProps, IState> {
       showIt:false,
       showCreate:false,
       showUpdate:false,
-      loading:true
+      loading:true,
+      searchTerm:"",
     };
 
     this.Showitem = this.Showitem.bind(this);
@@ -60,8 +62,9 @@ export default class WebPart extends React.Component<IProps, IState> {
       reactHandler.setState({  
                 items: response  
               });
-       reactHandler.setState({ loading: false });
-     });     
+      //  reactHandler.setState({ loading: false });
+     });
+     reactHandler.setState({ loading: false });
   }
    
   public render(): React.ReactElement<IProps> {
@@ -72,7 +75,8 @@ export default class WebPart extends React.Component<IProps, IState> {
           (
             <div>
               <DefaultButton buttonType={3} className='ms-Button ms-Button--primary' id="Create" type="submit" onClick={() => this.createItem()} text={"Create Item"} />
-              <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} />
+              <Search onChange={(e) => this.searchListItem(e)}>Search Item</Search>
+              <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} searchTerm={this.isSearched} currentStat={this.state}/>
             </div>)
         }
         {this.state.loading && <Loader />}
@@ -158,14 +162,24 @@ export default class WebPart extends React.Component<IProps, IState> {
         reactHandler.setState({  
                   items: response  
                 });
-       });
-       reactHandler.setState({ loading: false });
-    });
+        reactHandler.setState({ loading: false });
+       });       
+    });    
   }
 
    public createItem(){
     this.setState ({showIt: false});
     this.setState ({showCreate: true});
     this.setState ({showUpdate: false});
+   }
+   searchListItem(e){
+    //  console.log(e);
+    this.setState({searchTerm: e.target.value});     
+   }
+  //  isSearched = (searchTerm) => (item) => !searchTerm || item.Title.includes(searchTerm);    
+   isSearched(searchTerm){
+    return function(item){
+      return !searchTerm || item.Title.toLowerCase().includes(searchTerm.toLowerCase());
+    };
    }
 }

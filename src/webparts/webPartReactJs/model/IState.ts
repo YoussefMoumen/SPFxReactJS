@@ -19,4 +19,5 @@ export interface IState{
           showCreate:boolean;
           showUpdate:boolean;
           loading:boolean;
+          searchTerm:string;
   }
