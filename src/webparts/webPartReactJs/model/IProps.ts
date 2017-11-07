@@ -8,4 +8,5 @@ export interface IWebPartReactJsWebPartProps {
   description: string;
   currentstate: string;
   Title:string;
+  Lists:string;
 } 

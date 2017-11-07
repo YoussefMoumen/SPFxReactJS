@@ -6,11 +6,11 @@ export default class Search extends React.Component<any,any> {
         super(props); 
     }
     public render() {
-        let {onChange, children} = this.props;
+        let {onChange, children, value} = this.props;
         return (    
           <div>
               {children}
-              <input type="text" onChange={onChange}/>
+              <input type="text" onChange={onChange} value={value}/>
           </div>
           
         );
