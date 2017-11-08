@@ -34,8 +34,9 @@ export default class Create extends React.Component<any,any> {
           }
       }
       public addItem = () => {
+        let {CurrentList} = this.props;
         let title=document.getElementById('Title')["value"];
-        pnp.sp.web.lists.getByTitle('List To test').items.add({    
+        pnp.sp.web.lists.getById(CurrentList).items.add({    
             Title : title,
            }).then((newItem) => {
             console.log(newItem);
@@ -48,9 +49,10 @@ export default class Create extends React.Component<any,any> {
         this.props.action(true);
     }
     public updateItem = (id:string) => {
+      let {CurrentList} = this.props;
         var reactHandler = this;
           let title=document.getElementById('Title')["value"];
-          pnp.sp.web.lists.getByTitle('List To test').items.getById(+id).update({    
+          pnp.sp.web.lists.getByTitle(CurrentList).items.getById(+id).update({    
             Title : title,
            }).then((newItem) => {
             console.log(newItem);

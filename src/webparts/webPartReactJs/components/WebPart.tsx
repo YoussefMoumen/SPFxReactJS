@@ -55,16 +55,17 @@ export default class WebPart extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(){
-    var reactHandler = this;  
-
-    pnp.sp.web.lists.getByTitle("List To test").items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
+    var reactHandler = this;
+    // var TitleOrId = this.props.Lists !== undefined ? this.props.Lists : "List To test";
+    // console.log(TitleOrId);      
+    pnp.sp.web.lists.getById(this.props.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
       console.log(response);      
       reactHandler.setState({  
                 items: response  
               });
-      //  reactHandler.setState({ loading: false });
+      reactHandler.setState({ loading: false });
      });
-     reactHandler.setState({ loading: false });
+    //  reactHandler.setState({ loading: false });
   }
    
   public render(): React.ReactElement<IProps> {
@@ -75,6 +76,7 @@ export default class WebPart extends React.Component<IProps, IState> {
           (
             <div>
               <div>{this.props.description}</div>
+              <div>{this.props.Lists}</div>
               <DefaultButton buttonType={3} className='ms-Button ms-Button--primary' id="Create" type="submit" onClick={() => this.createItem()} text={"Create Item"} />
               <Search onChange={(e) => this.searchListItem(e)} value={this.state.searchTerm}>Search Item</Search>
               <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} searchTerm={this.isSearched} currentStat={this.state}/>
@@ -82,7 +84,7 @@ export default class WebPart extends React.Component<IProps, IState> {
         }
         {this.state.loading && <Loader />}
         {this.state.showIt && <Detail currentStat={this.state} action={this.handler} />}
-        {(this.state.showCreate || this.state.showUpdate) && <Create action={this.handler} CurrentState={this.state} />}        
+        {(this.state.showCreate || this.state.showUpdate) && <Create action={this.handler} CurrentState={this.state} CurrentList={this.props.Lists}/>}        
       </div>
     );
   }
@@ -96,7 +98,7 @@ export default class WebPart extends React.Component<IProps, IState> {
       if(!isReturn){
       reactHandler.setState ({loading: true});       
     jquery.ajax({  
-        url: `${this.props.siteurl}/_api/web/lists/getbytitle('List To test')/items?$select=Title,Id,Created,Author/Title&$expand=Author`,  
+        url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items?$select=Title,Id,Created,Author/Title&$expand=Author`,  
         type: "GET",  
         headers:{'Accept': 'application/json; odata=verbose;'},  
         success:(resultData) => {  
@@ -116,7 +118,7 @@ export default class WebPart extends React.Component<IProps, IState> {
   public Showitem = (id:string) => {     
      var reactHandler = this;  
      jquery.ajax({  
-         url: `${this.props.siteurl}/_api/web/lists/getbytitle('List To test')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
+         url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
          type: "GET",  
          headers:{'Accept': 'application/json; odata=verbose;'},  
          success:(resultData) => {  
@@ -132,11 +134,22 @@ export default class WebPart extends React.Component<IProps, IState> {
      });
      
    }
+   componentWillReceiveProps(nextProps){
+    var reactHandler = this;          
+    pnp.sp.web.lists.getById(nextProps.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
+      console.log(response);      
+      reactHandler.setState({  
+                items: response  
+              });
+      reactHandler.setState({ loading: false });
+     });
+     this.setState({searchTerm: nextProps.value});          
+  }
 
   public updateStatus(id:string){
     var reactHandler = this;  
     jquery.ajax({  
-        url: `${this.props.siteurl}/_api/web/lists/getbytitle('List To test')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
+        url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
         type: "GET",  
         headers:{'Accept': 'application/json; odata=verbose;'},  
         success:(resultData) => {  
@@ -156,8 +169,8 @@ export default class WebPart extends React.Component<IProps, IState> {
   public DeleteItem(id:string){
     var reactHandler = this;
     reactHandler.setState({ loading: true });
-    pnp.sp.web.lists.getByTitle("List To test").items.getById(+id).delete().then(_ => {
-      pnp.sp.web.lists.getByTitle("List To test").items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
+    pnp.sp.web.lists.getById(this.props.Lists).items.getById(+id).delete().then(_ => {
+      pnp.sp.web.lists.getById(this.props.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
         console.log(response);
         
         reactHandler.setState({  

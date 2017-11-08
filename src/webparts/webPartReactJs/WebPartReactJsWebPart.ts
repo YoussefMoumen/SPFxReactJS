@@ -20,8 +20,13 @@ import * as pnp from 'sp-pnp-js';
 
 
 export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPartReactJsWebPartProps> {  
-  private dropdownOptions: IPropertyPaneDropdownOption[];
+  private dropdownOptions: IPropertyPaneDropdownOption[] = [];
+  private listsFetched: boolean;
+
   public render(): void {
+    this.fetchLists().then((response) => {
+      this.dropdownOptions = response;      
+    });
     const element: React.ReactElement<IProps> = React.createElement(
       WebPart,
       {
@@ -29,7 +34,7 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
         siteurl: this.context.pageContext.web.absoluteUrl,
         currentStat: this.properties.currentstate,
         Title: this.properties.Title,
-        Lists: this.properties.Lists          
+        Lists: this.properties.Lists
       } 
        
     );
@@ -41,45 +46,26 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
     return Version.parse('1.0');
   }
 
-  private fetchLists(): Promise<IPropertyPaneDropdownOption[]> {
-    
+  private fetchLists():Promise<IPropertyPaneDropdownOption[]>{
     var options: Array<IPropertyPaneDropdownOption> = new Array<IPropertyPaneDropdownOption>();
-
-    return jquery.ajax({  
-      url: `${this.context.pageContext.web.absoluteUrl}/_api/web/lists/?$filter=Hidden eq false`,  
-      type: "GET",  
-      headers:{'Accept': 'application/json; odata=verbose;'},  
-      success:(resultData) => {  
-        /*resultData.d.results;*/  
-        resultData.d.results.map((item,key)=>{
-          options.push( { key: item.Id, text: item.Title });
-          console.log(options);
-          return options;                    
-        });   
-         
-      },  
-      error : (jqXHR, textStatus, errorThrown) => {  
-      }  
-  }); 
-  
-  //   return pnp.sp.web.lists.select("Title", "Id").get().then(r => {
-  //     console.log(r.Title);
-  //     console.log(r.Id);
-  //     var options: Array<IPropertyPaneDropdownOption> = new Array<IPropertyPaneDropdownOption>();
-  //     options.push( { key: r.Id, text: r.Title });
-  //     console.log(options);
-  //     return options;      
-  // });
-  
+    return pnp.sp.web.lists.select("Title", "Id").get().then(r => {
+      r.map(x =>{
+        options.push( { key: x.Id, text: x.Title });
+      })    
+      return options;      
+    });
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    this.fetchLists().then((response) => {
-      console.log(response.toString());      
-      this.dropdownOptions = {...response};
-      console.log(this.dropdownOptions);
-      // now refresh the property pane, now that the promise has been resolved..
-      this.onDispose();
-    });
+    // console.log("1")
+    // this.fetchLists().then(x => {
+    //   if((this.dropdownOptions !== null || this.dropdownOptions !== undefined) && this.dropdownOptions.length === 0){
+    //     this.dropdownOptions = x;
+    //     console.log("2")
+    //     this.getPropertyPaneConfiguration();
+    //   }
+    // })
+    // console.log("3")
+    
     return {
       pages: [
         {
@@ -95,7 +81,7 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
                 }),
                 PropertyPaneDropdown('Lists', {
                   label: 'Dropdown',
-                  options: this.dropdownOptions
+                  options: this.dropdownOptions,
                 }),
               ]
             }
