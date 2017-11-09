@@ -52,7 +52,7 @@ export default class Create extends React.Component<any,any> {
       let {CurrentList} = this.props;
         var reactHandler = this;
           let title=document.getElementById('Title')["value"];
-          pnp.sp.web.lists.getByTitle(CurrentList).items.getById(+id).update({    
+          pnp.sp.web.lists.getById(CurrentList).items.getById(+id).update({    
             Title : title,
            }).then((newItem) => {
             console.log(newItem);
