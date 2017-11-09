@@ -19,6 +19,9 @@ import Create from './list/item/Create';
 import Loader from './Loader';
 import Listing from './list/List';
 import Search from './Search';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css'
+
 
 export default class WebPart extends React.Component<IProps, IState> {
   public constructor(props, state){  
@@ -54,21 +57,42 @@ export default class WebPart extends React.Component<IProps, IState> {
     this.updateStatus = this.updateStatus.bind(this);
     this.DeleteItem = this.DeleteItem.bind(this);
   }
+  
 
 //Life Cycle methods
 
   public render(): React.ReactElement<IProps> {
     console.log(this);
+    const columns = [{
+      Header: 'Title',
+      accessor: 'Title', // String-based value accessors!
+    },{
+      show: false,
+      accessor: 'Id', // String-based value accessors!
+    }, {
+      Header: 'created',
+      accessor: 'Created'
+    }, {
+      id: 'AuthorTitle', // Required because our accessor is not a string
+      Header: 'Author Name',
+      accessor: 'Author.Title' // Custom value accessors!
+    }, {
+      Header: 'Actions',       
+      Cell: i =>  <span className='number'>
+        <i id="ShowItem" onClick={() => this.Showitem(i.original.Id)} className="ms-Icon ms-Icon--GroupedList" aria-hidden="true">
+        <i id="UpdateItem" onClick={() => this.updateStatus(i.original.Id)} className="ms-Icon ms-Icon--Edit" aria-hidden="true"></i> 
+        <i id="DeleteItem" onClick={() => this.DeleteItem(i.original.Id)} className="ms-Icon ms-Icon--Delete" aria-hidden="true"></i>
+        </i></span>
+    }]  
     return (
       <div className={styles.listItemsForm}>
         {!this.state.showIt && !this.state.showCreate && !this.state.loading && !this.state.showUpdate &&
           (
             <div>
-              <div>{this.props.description}</div>
-              <div>{this.props.Lists}</div>
               <DefaultButton buttonType={3} className='ms-Button ms-Button--primary' id="Create" type="submit" onClick={() => this.createItem()} text={"Create Item"} />
               <Search onChange={(e) => this.searchListItem(e)} value={this.state.searchTerm}>Search Item</Search>
-              <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} searchTerm={this.isSearched} currentStat={this.state}/>
+              {/* <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} searchTerm={this.isSearched} currentStat={this.state}/> */}
+              <ReactTable data={this.state.items} columns={columns} sortable = {true} resizable= {true} filterable= {true} loading= {false} defaultPageSize={10} />              
             </div>)
         }
         {this.state.loading && <Loader />}
@@ -134,7 +158,9 @@ export default class WebPart extends React.Component<IProps, IState> {
     }    
   }
 
-    public Showitem = (id:string) => {     
+    public Showitem = (id:string) => { 
+      console.log(id);
+          
       var reactHandler = this;  
       jquery.ajax({  
           url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
