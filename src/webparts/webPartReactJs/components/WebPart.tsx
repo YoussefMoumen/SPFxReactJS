@@ -90,7 +90,7 @@ export default class WebPart extends React.Component<IProps, IState> {
           (
             <div>
               <DefaultButton buttonType={3} className='ms-Button ms-Button--primary' id="Create" type="submit" onClick={() => this.createItem()} text={"Create Item"} />
-              <Search onChange={(e) => this.searchListItem(e)} value={this.state.searchTerm}>Search Item</Search>
+              {/* <Search onChange={(e) => this.searchListItem(e)} value={this.state.searchTerm}>Search Item</Search> */}
               {/* <Listing items={this.state.items} viewDetail={this.Showitem} viewUpdate={this.updateStatus} deleteItem={this.DeleteItem} searchTerm={this.isSearched} currentStat={this.state}/> */}
               <ReactTable data={this.state.items} columns={columns} sortable = {true} resizable= {true} filterable= {true} loading= {false} defaultPageSize={10} />              
             </div>)
