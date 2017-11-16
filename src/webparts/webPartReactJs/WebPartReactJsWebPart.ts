@@ -18,7 +18,6 @@ import * as jquery from 'jquery';
 import * as pnp from 'sp-pnp-js';
 
 
-
 export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPartReactJsWebPartProps> {  
   private dropdownOptions: IPropertyPaneDropdownOption[] = [];
   private listsFetched: boolean;
@@ -56,16 +55,7 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
     });
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    // console.log("1")
-    // this.fetchLists().then(x => {
-    //   if((this.dropdownOptions !== null || this.dropdownOptions !== undefined) && this.dropdownOptions.length === 0){
-    //     this.dropdownOptions = x;
-    //     console.log("2")
-    //     this.getPropertyPaneConfiguration();
-    //   }
-    // })
-    // console.log("3")
-    
+
     return {
       pages: [
         {

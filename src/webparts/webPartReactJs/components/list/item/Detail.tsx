@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IProps } from '../../../model/IProps';
+
 export default class Detail extends React.Component<any,any> {
 
     public constructor(props:IProps , state ){  

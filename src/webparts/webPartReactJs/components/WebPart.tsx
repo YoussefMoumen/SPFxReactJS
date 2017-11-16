@@ -20,7 +20,11 @@ import Loader from './Loader';
 import Listing from './list/List';
 import Search from './Search';
 import ReactTable from 'react-table';
-import 'react-table/react-table.css'
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-table/react-table.css';
+
+import CRUDservice from '../services/CRUD';
 
 
 export default class WebPart extends React.Component<IProps, IState> {
@@ -61,8 +65,7 @@ export default class WebPart extends React.Component<IProps, IState> {
 
 //Life Cycle methods
 
-  public render(): React.ReactElement<IProps> {
-    console.log(this);
+  public render(): React.ReactElement<IProps> {  
     const columns = [{
       Header: 'Title',
       accessor: 'Title', // String-based value accessors!
@@ -79,10 +82,10 @@ export default class WebPart extends React.Component<IProps, IState> {
     }, {
       Header: 'Actions',       
       Cell: i =>  <span className='number'>
-        <i id="ShowItem" onClick={() => this.Showitem(i.original.Id)} className="ms-Icon ms-Icon--GroupedList" aria-hidden="true">
+        <i id="ShowItem" onClick={() => this.Showitem(i.original.Id)} className="ms-Icon ms-Icon--GroupedList" aria-hidden="true"></i> 
         <i id="UpdateItem" onClick={() => this.updateStatus(i.original.Id)} className="ms-Icon ms-Icon--Edit" aria-hidden="true"></i> 
         <i id="DeleteItem" onClick={() => this.DeleteItem(i.original.Id)} className="ms-Icon ms-Icon--Delete" aria-hidden="true"></i>
-        </i></span>
+        </span>
     }]  
     return (
       <div className={styles.listItemsForm}>
@@ -103,29 +106,26 @@ export default class WebPart extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(){
-    var reactHandler = this;
-    // var TitleOrId = this.props.Lists !== undefined ? this.props.Lists : "List To test";
-    // console.log(TitleOrId);      
-    pnp.sp.web.lists.getById(this.props.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
-      console.log(response);      
+    var reactHandler = this;          
+    new CRUDservice().getListByTitle('List To test').then((response) => {
+      console.log("componentDidMount : ",response);      
       reactHandler.setState({  
                 items: response  
               });
       reactHandler.setState({ loading: false });
-     });
-    //  reactHandler.setState({ loading: false });
+     });;                    
   }
 
   componentWillReceiveProps(nextProps){
-    var reactHandler = this;          
-    pnp.sp.web.lists.getById(nextProps.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
-      console.log(response);      
+    var reactHandler = this;    
+    new CRUDservice().getListById(nextProps.Lists).then((response) => {
+      console.log("componentWillReceiveProps : ",response);      
       reactHandler.setState({  
                 items: response  
               });
       reactHandler.setState({ loading: false });
      });
-     this.setState({searchTerm: nextProps.value});          
+    //  this.setState({searchTerm: nextProps.value});                 
   }
 
 //Life Cycle methods
@@ -139,87 +139,66 @@ export default class WebPart extends React.Component<IProps, IState> {
         reactHandler.setState ({showCreate: false});
         reactHandler.setState ({showUpdate: false}); 
         if(!isReturn){
-        reactHandler.setState ({loading: true});       
-      jquery.ajax({  
-          url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items?$select=Title,Id,Created,Author/Title&$expand=Author`,  
-          type: "GET",  
-          headers:{'Accept': 'application/json; odata=verbose;'},  
-          success:(resultData) => {  
-            /*resultData.d.results;*/  
-            reactHandler.setState({  
-              items: resultData.d.results  
-            });
-          
-            reactHandler.setState ({loading: false});       
-          },  
-          error : (jqXHR, textStatus, errorThrown) => {  
-          }  
-      });  
+        reactHandler.setState ({loading: true});
+        new CRUDservice().getListById(this.props.Lists).then((response) => {
+          console.log(response);
+          reactHandler.setState({  
+            items: response  
+          });            
+          reactHandler.setState ({loading: false});
+         });       
+ 
     }    
   }
 
-    public Showitem = (id:string) => { 
-      console.log(id);
-          
-      var reactHandler = this;  
-      jquery.ajax({  
-          url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
-          type: "GET",  
-          headers:{'Accept': 'application/json; odata=verbose;'},  
-          success:(resultData) => {  
-            /*resultData.d.results;*/  
-            reactHandler.setState({  
-              item: resultData.d
-            });  
-            reactHandler.setState ({showIt: true});
-            reactHandler.setState ({showCreate: false});           
-          },  
-          error : (jqXHR, textStatus, errorThrown) => {  
-          }  
-      });
-      
-    }
-
-
-    public updateStatus(id:string){
-      var reactHandler = this;  
-      jquery.ajax({  
-          url: `${this.props.siteurl}/_api/web/lists('${this.props.Lists}')/items(${id})?$select=Title,Id,Created,Author/Title&$expand=Author`,  
-          type: "GET",  
-          headers:{'Accept': 'application/json; odata=verbose;'},  
-          success:(resultData) => {  
-            /*resultData.d.results;*/  
-            reactHandler.setState({  
-              item: resultData.d
-            });  
-            reactHandler.setState ({showIt: false});
-            reactHandler.setState ({showCreate: false});
-            reactHandler.setState ({showUpdate: true});           
-          },  
-          error : (jqXHR, textStatus, errorThrown) => {  
-          }  
-      });                       
-    }
-
-    public DeleteItem(id:string){
+    public Showitem = (id:string) => {      
+      let {Lists} = this.props;     
       var reactHandler = this;
-      reactHandler.setState({ loading: true });
-      pnp.sp.web.lists.getById(this.props.Lists).items.getById(+id).delete().then(_ => {
-        pnp.sp.web.lists.getById(this.props.Lists).items.select("Title", "Id", "Created", "Author/Title").expand("Author").get().then((response) => {
-          console.log(response);
-          
+      var t = new CRUDservice().getItemById(Lists,id);
+      console.log("new CRUDservice().getItemById(Lists,id) : ", t );      
+       new CRUDservice().getItemById(Lists,id).then(response => {
+         console.log("Showitem() => response : ", response);         
+          reactHandler.setState({ item: response});
+          reactHandler.setState ({showIt: true});
+          reactHandler.setState ({showCreate: false});
+       });            
+    }
+
+
+    public updateStatus = (id:string) => {
+      console.log("updateStatus() : ",this.state.showIt);
+      let {Lists} = this.props;      
+      var reactHandler = this;
+
+      new CRUDservice().getItemById(Lists,id).then(response => {
+          console.log("updateStatus() => response : ", response);         
+          reactHandler.setState({item: response});  
+          reactHandler.setState ({showIt: false});
+          reactHandler.setState ({showCreate: false});
+          reactHandler.setState ({showUpdate: true});   
+      });                                   
+    }
+
+    public DeleteItem = (id:string) => {
+      let {Lists} = this.props;
+      var reactHandler = this;
+
+      reactHandler.setState({ loading: true });      
+      new CRUDservice().deleteItemById(Lists,id).then(_ => {
+        new CRUDservice().getListById(this.props.Lists).then((response) => {
+          console.log(response);          
           reactHandler.setState({  
                     items: response  
-                  });
-          reactHandler.setState({ loading: false });
-        });       
+                  });                  
+          reactHandler.setState({ loading: false });                                           
+        });                              
       });    
     }
 
     public createItem(){
       this.setState ({showIt: false});
       this.setState ({showCreate: true});
-      this.setState ({showUpdate: false});
+      this.setState ({showUpdate: false});      
     }
     searchListItem(e){
       //  console.log(e);
