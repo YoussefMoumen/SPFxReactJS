@@ -23,7 +23,6 @@ import ReactTable from 'react-table';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-table/react-table.css';
-
 import CRUDservice from '../services/CRUD';
 
 
@@ -107,7 +106,7 @@ export default class WebPart extends React.Component<IProps, IState> {
 
   public componentDidMount(){
     var reactHandler = this;          
-    new CRUDservice().getListByTitle('List To test').then((response) => {
+    new CRUDservice().getListByTitle('TestList').then((response) => {
       console.log("componentDidMount : ",response);      
       reactHandler.setState({  
                 items: response  
@@ -146,8 +145,7 @@ export default class WebPart extends React.Component<IProps, IState> {
             items: response  
           });            
           reactHandler.setState ({loading: false});
-         });       
- 
+         });        
     }    
   }
 
@@ -161,7 +159,7 @@ export default class WebPart extends React.Component<IProps, IState> {
           reactHandler.setState({ item: response});
           reactHandler.setState ({showIt: true});
           reactHandler.setState ({showCreate: false});
-       });            
+        });            
     }
 
 

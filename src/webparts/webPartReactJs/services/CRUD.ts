@@ -19,6 +19,12 @@ import * as pnp from 'sp-pnp-js';
         return pnp.sp.web.lists.getById(listId).items.getById(+itemId).get();
     }
 
+    public addItem(listId:string,Title:string):Promise<any> {
+        return pnp.sp.web.lists.getById(listId).items.add({    
+            Title : Title,
+           });
+    }
+
     public updateItemById(listId:string, itemId:string):Promise<any>
     {
         return pnp.sp.web.lists.getById(listId).items.getById(+itemId).update({    

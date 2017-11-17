@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { IProps } from '../../../model/IProps';
 import * as pnp from 'sp-pnp-js';
+import CRUDservice from '../../../services/CRUD';
 
 export default class Create extends React.Component<any,any> {
 
@@ -36,13 +37,17 @@ export default class Create extends React.Component<any,any> {
       public addItem = () => {
         let {CurrentList} = this.props;
         let title=document.getElementById('Title')["value"];
-        pnp.sp.web.lists.getById(CurrentList).items.add({    
-            Title : title,
-           }).then((newItem) => {
-            console.log(newItem);
-            // alert("Record with Title Name : "+ title + " Added !");
-            this.props.action();    
-        });                                                              
+        new CRUDservice().addItem(CurrentList,title).then((newItem) => {
+          console.log("Create => newItem",newItem);          
+          this.props.action();    
+      });   
+        // pnp.sp.web.lists.getById(CurrentList).items.add({    
+        //     Title : title,
+        //    }).then((newItem) => {
+        //     console.log(newItem);
+        //     // alert("Record with Title Name : "+ title + " Added !");
+        //     this.props.action();    
+        // });                                                              
       }
 
       private returnList(){
