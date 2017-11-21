@@ -104,15 +104,16 @@ export default class WebPart extends React.Component<IProps, IState> {
     );
   }
 
-  public componentDidMount(){
-    var reactHandler = this;          
+  public componentDidMount(){            
+    var reactHandler = this;
+    console.log("componentDidMount Lists",this.props.Lists);          
     new CRUDservice().getListByTitle('TestList').then((response) => {
       console.log("componentDidMount : ",response);      
       reactHandler.setState({  
                 items: response  
               });
-      reactHandler.setState({ loading: false });
-     });;                    
+      reactHandler.setState({ loading: false });      
+     });                    
   }
 
   componentWillReceiveProps(nextProps){

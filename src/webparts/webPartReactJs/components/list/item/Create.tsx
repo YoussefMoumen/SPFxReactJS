@@ -40,14 +40,7 @@ export default class Create extends React.Component<any,any> {
         new CRUDservice().addItem(CurrentList,title).then((newItem) => {
           console.log("Create => newItem",newItem);          
           this.props.action();    
-      });   
-        // pnp.sp.web.lists.getById(CurrentList).items.add({    
-        //     Title : title,
-        //    }).then((newItem) => {
-        //     console.log(newItem);
-        //     // alert("Record with Title Name : "+ title + " Added !");
-        //     this.props.action();    
-        // });                                                              
+        });                                                                 
       }
 
       private returnList(){

@@ -16,7 +16,8 @@ import { IProps,IWebPartReactJsWebPartProps } from './model/IProps';
 import { css } from 'office-ui-fabric-react';
 import * as jquery from 'jquery';
 import * as pnp from 'sp-pnp-js';
-
+import { ToastContainer, toast } from 'react-toastify';
+import { log } from 'sp-pnp-js';
 
 export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPartReactJsWebPartProps> {  
   private dropdownOptions: IPropertyPaneDropdownOption[] = [];
@@ -34,10 +35,8 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
         currentStat: this.properties.currentstate,
         Title: this.properties.Title,
         Lists: this.properties.Lists
-      } 
-       
-    );
-
+      }        
+    );    
     ReactDom.render(element, this.domElement);
   }
 
@@ -45,9 +44,10 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
     return Version.parse('1.0');
   }
 
-  private fetchLists():Promise<IPropertyPaneDropdownOption[]>{
+  private fetchLists():Promise<IPropertyPaneDropdownOption[]>{    
     var options: Array<IPropertyPaneDropdownOption> = new Array<IPropertyPaneDropdownOption>();
-    return pnp.sp.web.lists.select("Title", "Id").get().then(r => {
+    return pnp.sp.web.lists.filter('Hidden eq false').select("Title", "Id").get().then(r => {
+      console.log("fetchLists", r);       
       r.map(x =>{
         options.push( { key: x.Id, text: x.Title });
       })    
@@ -72,6 +72,7 @@ export default class WebPartReactJsWebPart extends BaseClientSideWebPart<IWebPar
                 PropertyPaneDropdown('Lists', {
                   label: 'Dropdown',
                   options: this.dropdownOptions,
+                  selectedKey:this.dropdownOptions[1].key,
                 }),
               ]
             }
